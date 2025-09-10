@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.image-upload-container {
+  @apply border-2 border-dashed border-gray-300 rounded-lg p-4 transition-colors hover:border-green-500;
+}
+
+.upload-button {
+  @apply px-6 py-3 rounded-lg text-white font-semibold transition-colors;
+}
+
+.upload-button:not(:disabled) {
+  @apply bg-green-600 hover:bg-green-700;
+}
+
+.upload-button:disabled {
+  @apply bg-gray-400 cursor-not-allowed;
+}
+
+.result-card {
+  @apply bg-gray-50 p-4 rounded-lg transition-all hover:shadow-md;
+}
+
+.severity-none {
+  @apply text-green-600;
+}
+
+.severity-minor {
+  @apply text-yellow-600;
+}
+
+.severity-moderate {
+  @apply text-orange-600;
+}
+
+.severity-severe {
+  @apply text-red-600;
+}

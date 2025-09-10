@@ -1,0 +1,5 @@
+before_image,after_image,is_mining,source_dir
+before_mine_01.jpg,after_mine_01.jpg,1,data/train
+before_normal_01.jpg,after_normal_01.jpg,0,data/train
+before_mine_02.jpg,after_mine_02.jpg,1,data/train
+before_normal_02.jpg,after_normal_02.jpg,0,data/train

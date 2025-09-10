@@ -1,0 +1,37 @@
+{
+  "modelTopology": {
+    "class_name": "Functional",
+    "config": {
+      "name": "mining_detector",
+      "layers": [
+        {
+          "name": "before_input",
+          "class_name": "InputLayer",
+          "config": {
+            "batch_input_shape": [null, 256, 256, 3],
+            "dtype": "float32",
+            "name": "before_input"
+          }
+        },
+        {
+          "name": "after_input",
+          "class_name": "InputLayer",
+          "config": {
+            "batch_input_shape": [null, 256, 256, 3],
+            "dtype": "float32",
+            "name": "after_input"
+          }
+        }
+      ]
+    }
+  },
+  "weightsManifest": [
+    {
+      "paths": ["best_model.weights.bin"],
+      "weights": []
+    }
+  ],
+  "format": "layers-model",
+  "generatedBy": "keras v2.15.0",
+  "convertedBy": "TensorFlow.js Converter v4.14.0"
+}

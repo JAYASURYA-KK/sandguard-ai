@@ -1,0 +1,33 @@
+import { DetectionInterface } from "@/components/detection-interface"
+import DetectionList from "@/components/detection-list"
+import AlertsClient from "@/components/alerts-client"
+import SystemDashboard from "@/components/system-dashboard"
+
+export default function Page() {
+  return (
+    <main className="max-w-6xl mx-auto p-6 space-y-8">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold text-balance">Riverbank Change Detection System</h1>
+        <p className="text-muted-foreground max-w-3xl">
+          Advanced AI-powered system for detecting riverbank erosion, land use changes, and vehicle activity. 
+          Upload images or use Google Earth Engine satellite data for comprehensive analysis with vehicle detection, 
+          soil analysis, and erosion risk assessment.
+        </p>
+      </header>
+
+      <DetectionInterface />
+
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">Recent Detections</h2>
+        <DetectionList />
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">System Dashboard</h2>
+        <SystemDashboard />
+      </section>
+
+      <AlertsClient />
+    </main>
+  )
+}
