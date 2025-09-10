@@ -15,7 +15,7 @@ An intelligent security monitoring and threat detection system powered by artifi
 
 ## 🏗️ Architecture
 
-![AI Model Architecture](model.png)
+![AI Model Architecture](screenshot/model.png)
 
 The system leverages advanced machine learning algorithms to:
 - Analyze security patterns and behaviors
