@@ -1,0 +1,16 @@
+Model Evaluation Report
+=====================
+
+Total test samples: 128
+Positive samples (with changes): 64.0
+Negative samples (no changes): 64.0
+
+Classification Report:
+              precision    recall  f1-score   support
+
+   No Change       0.81      0.94      0.87        64
+      Change       0.93      0.78      0.85        64
+
+    accuracy                           0.86       128
+   macro avg       0.87      0.86      0.86       128
+weighted avg       0.87      0.86      0.86       128

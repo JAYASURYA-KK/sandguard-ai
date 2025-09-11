@@ -37,17 +37,17 @@ export async function POST(request: NextRequest) {
         resolution: 30
       });
       
-      beforeImagePath = earthEngineResult.beforeImagePath;
-      afterImagePath = earthEngineResult.afterImagePath;
+      // Use the URLs directly from Earth Engine service
+      beforeImagePath = earthEngineResult.beforeImageUrl;
+      afterImagePath = earthEngineResult.afterImageUrl;
     } else if (uploadedImage) {
-      // Use uploaded image as "after" image and optional provided "before" image
-      const uploadsDir = path.join(process.cwd(), 'uploads');
-      const filename = `uploaded-${Date.now()}-${uploadedImage.name}`;
-      const uploadedPath = path.join(uploadsDir, filename);
+      // For uploaded images, we'll send them directly to the backend API
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+      const formDataForBackend = new FormData();
+      formDataForBackend.append('afterImage', uploadedImage);
       
-      // Save uploaded image
+      // Validate the uploaded image
       const buffer = Buffer.from(await uploadedImage.arrayBuffer());
-      // Validate uploaded image is land-related
       const validation = await isLandscapeImage(buffer);
       if (!validation.isValid) {
         return NextResponse.json(
@@ -55,13 +55,12 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      fs.writeFileSync(uploadedPath, buffer);
-      
-      afterImagePath = uploadedPath;
+
+      // Convert buffer to base64 for sending to backend
+      const afterImageBase64 = buffer.toString('base64');
+      afterImagePath = `data:${uploadedImage.type};base64,${afterImageBase64}`;
       
       if (uploadedBeforeImage) {
-        const beforeFilename = `uploaded-before-${Date.now()}-${uploadedBeforeImage.name}`;
-        const beforePath = path.join(uploadsDir, beforeFilename);
         const beforeBuffer = Buffer.from(await uploadedBeforeImage.arrayBuffer());
         const beforeValidation = await isLandscapeImage(beforeBuffer);
         if (!beforeValidation.isValid) {
@@ -70,11 +69,17 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
-        fs.writeFileSync(beforePath, beforeBuffer);
-        beforeImagePath = beforePath;
+        const beforeImageBase64 = beforeBuffer.toString('base64');
+        beforeImagePath = `data:${uploadedBeforeImage.type};base64,${beforeImageBase64}`;
       } else {
-        // Find or create a "before" image from the dataset
-        beforeImagePath = await datasetManager.findBestBeforeImage(uploadedPath) || await findBeforeImage(uploadsDir, lat, lng);
+        // Use backend API to get a reference image
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+        const response = await fetch(`${backendUrl}/api/reference-image?lat=${lat}&lng=${lng}`);
+        if (!response.ok) {
+          throw new Error('Failed to get reference image from backend');
+        }
+        const referenceImage = await response.json();
+        beforeImagePath = referenceImage.imageUrl;
       }
     } else {
       return NextResponse.json(
@@ -83,29 +88,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Run enhanced change detection
-    const detectionResult = await riverbankDetector.detectChanges(beforeImagePath, afterImagePath);
+    // Send detection request to backend
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+    const detectionResponse = await fetch(`${backendUrl}/api/detect`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        beforeImage: beforeImagePath,
+        afterImage: afterImagePath,
+        lat,
+        lng,
+      }),
+    });
 
-    // Convert images to base64 for storage
-    const beforeImageBase64 = await imageToBase64(beforeImagePath);
-    const afterImageBase64 = await imageToBase64(afterImagePath);
+    if (!detectionResponse.ok) {
+      throw new Error('Failed to process detection on backend');
+    }
 
-    // Calculate severity score
-    const severity = detectionResult.severity;
-    const severityScore = getSeverityScore(severity);
+    const detectionResult = await detectionResponse.json();
 
-    // Create detection record
+    // Create detection record using the backend response
     const detectionRecord = {
       createdAt: new Date().toISOString(),
-      beforeImageBase64,
-      afterImageBase64,
+      beforeImageBase64: detectionResult.beforeImageBase64 || beforeImagePath,
+      afterImageBase64: detectionResult.afterImageBase64 || afterImagePath,
       overlayImageBase64: detectionResult.changeMap,
-      width: 256,
-      height: 256,
-      changePixels: Math.round((detectionResult.changePercentage / 100) * 256 * 256),
-      totalPixels: 256 * 256,
-      severity: severityScore,
-      threshold: 30,
+      width: detectionResult.width || 256,
+      height: detectionResult.height || 256,
+      changePixels: detectionResult.changePixels,
+      totalPixels: detectionResult.totalPixels,
+      severity: detectionResult.severity,
+      threshold: detectionResult.threshold || 30,
       coordinates: lat && lng ? { lat, lng } : undefined,
       notes,
       model: {
@@ -117,7 +132,7 @@ export async function POST(request: NextRequest) {
       changePercentage: detectionResult.changePercentage,
       vehicleDetections: detectionResult.vehicleDetections,
       soilAnalysis: detectionResult.soilAnalysis,
-      severityLevel: severity
+      severityLevel: detectionResult.severityLevel
     };
 
     // Save to database
