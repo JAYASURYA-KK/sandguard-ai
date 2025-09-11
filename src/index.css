@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* AI Mining Detection System - Environmental Monitoring Design System 
+All colors MUST be HSL for proper theming support.
+*/
+
+@layer base {
+  :root {
+    /* Base colors - Clean environmental theme */
+    --background: 210 11% 96%;
+    --foreground: 215 25% 27%;
+
+    /* Card system - Subtle environmental feel */
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+
+    /* Primary - Forest green for environmental monitoring */
+    --primary: 140 35% 24%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 140 45% 42%;
+
+    /* Secondary - Water blue for rivers/lakes */
+    --secondary: 200 65% 45%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Muted - Soft earth tones */
+    --muted: 210 20% 92%;
+    --muted-foreground: 215 15% 50%;
+
+    /* Accent - Satellite blue */
+    --accent: 210 75% 55%;
+    --accent-foreground: 0 0% 98%;
+
+    /* Alert system colors */
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --warning: 35 85% 55%;
+    --warning-foreground: 0 0% 98%;
+    --success: 140 65% 45%;
+    --success-foreground: 0 0% 98%;
+
+    /* Detection overlay colors */
+    --change-detected: 0 85% 65%;
+    --vehicle-detected: 25 90% 60%;
+    --safe-zone: 140 60% 50%;
+
+    /* Interface elements */
+    --border: 214.3 31.8% 91.4%;
+    --input: 0 0% 100%;
+    --input-border: 215 15% 85%;
+    --ring: 140 35% 24%;
+
+    /* Gradients - Environmental and satellite themes */
+    --gradient-earth: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-water: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
+    --gradient-alert: linear-gradient(135deg, hsl(var(--warning)), hsl(var(--destructive)));
+    --gradient-overlay: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+
+    /* Shadows - Professional depth */
+    --shadow-card: 0 4px 12px -2px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
+    --shadow-detection: 0 0 20px 5px hsl(var(--change-detected) / 0.3);
+    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.4);
+
+    /* Animations - Smooth professional transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-detection: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .detection-overlay {
+    @apply absolute inset-0 pointer-events-none transition-opacity duration-500;
+  }
+  
+  .satellite-container {
+    @apply relative overflow-hidden rounded-xl shadow-[var(--shadow-card)];
+  }
+  
+  .alert-pulse {
+    animation: alert-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .detection-glow {
+    @apply shadow-[var(--shadow-detection)];
+  }
+}
+
+@layer utilities {
+  .gradient-earth {
+    background: var(--gradient-earth);
+  }
+  
+  .gradient-water {
+    background: var(--gradient-water);
+  }
+  
+  .gradient-alert {
+    background: var(--gradient-alert);
+  }
+}
+
+@keyframes alert-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes detection-scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
